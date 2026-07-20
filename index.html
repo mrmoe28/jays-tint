@@ -222,11 +222,12 @@
   /* Pricing */
   .price-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; max-width: 1000px; width: 100%; margin-top: 56px; }
   .price {
-    border: 1px solid var(--line);
+    border: 1px solid rgba(255,255,255,0.12);
     border-radius: 24px;
     padding: 40px 32px;
     text-align: left;
-    background: rgba(255,255,255,0.03);
+    background: rgba(8,9,12,0.72);
+    backdrop-filter: blur(10px);
     position: relative;
     transition: transform 0.4s var(--ease), border-color 0.4s;
   }
@@ -237,7 +238,7 @@
   .price .amount { font-size: 44px; font-weight: 800; letter-spacing: -0.03em; margin: 16px 0 4px; }
   .price .amount small { font-size: 16px; color: var(--muted); font-weight: 500; }
   .price ul { list-style: none; margin-top: 24px; display: flex; flex-direction: column; gap: 12px; }
-  .price li { color: var(--muted); font-size: 15px; display: flex; gap: 10px; align-items: flex-start; }
+  .price li { color: #d4d8dd; font-size: 15px; display: flex; gap: 10px; align-items: flex-start; }
   .price li::before { content: "✓"; color: var(--g1); font-weight: 700; }
 
   /* CTA / footer */
@@ -527,7 +528,7 @@
     <div class="price reveal from-left d1">
       <h3>Carbon</h3>
       <div class="amount">$150<small> / full car</small></div>
-      <p style="color:var(--muted);font-size:14px;">Great looks, solid heat rejection.</p>
+      <p style="color:#b6bcc3;font-size:14px;">Great looks, solid heat rejection.</p>
       <ul>
         <li>Non-fading carbon film</li>
         <li>Blocks 99% UV</li>
@@ -539,7 +540,7 @@
       <span class="tag">Most Popular</span>
       <h3>Ceramic</h3>
       <div class="amount">$250<small> / full car</small></div>
-      <p style="color:var(--muted);font-size:14px;">Max heat rejection, crystal clarity.</p>
+      <p style="color:#b6bcc3;font-size:14px;">Max heat rejection, crystal clarity.</p>
       <ul>
         <li>Premium ceramic film</li>
         <li>Superior infrared heat block</li>
@@ -550,7 +551,7 @@
     <div class="price reveal from-right d3">
       <h3>Single Windows</h3>
       <div class="amount">$150<small> / window</small></div>
-      <p style="color:var(--muted);font-size:14px;">Two fronts, a strip, or a redo.</p>
+      <p style="color:#b6bcc3;font-size:14px;">Two fronts, a strip, or a redo.</p>
       <ul>
         <li>Match your existing tint</li>
         <li>Windshield &amp; sunstrips</li>
@@ -681,7 +682,7 @@
     <a href="mailto:hello@jaystint.com"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:8px;"><rect x="2.5" y="4.5" width="19" height="15" rx="2"/><path d="m3 6 9 6.5L21 6"/></svg>hello@jaystint.com</a>
     <a href="#hero">↑ Back to top</a>
   </div>
-  <p style="color:var(--muted);font-size:14px;">Auto • Mobile • Residential • Commercial Window Tinting</p>
+  <p style="color:#b6bcc3;font-size:14px;">Auto • Mobile • Residential • Commercial Window Tinting</p>
   <p class="copyright">© <span id="year"></span> Jay's Tint. All rights reserved. Mobile window tinting done right.</p>
 </footer>
 
