@@ -14,11 +14,11 @@
     --fg: #f5f5f7;
     --muted: #9aa0a6;
     --line: rgba(255, 255, 255, 0.08);
-    --g1: #4285f4; /* blue */
-    --g2: #9b72cb; /* purple */
-    --g3: #d96570; /* pink/red */
-    --grad: linear-gradient(110deg, var(--g1), var(--g2) 45%, var(--g3));
-    --grad-soft: linear-gradient(110deg, #8ab4f8, #c58af9 50%, #f28b82);
+    --g1: #2dd4bf; /* teal */
+    --g2: #0ea5e9; /* sky blue */
+    --g3: #6366f1; /* indigo */
+    --grad: linear-gradient(110deg, var(--g1), var(--g2) 48%, var(--g3));
+    --grad-soft: linear-gradient(110deg, #5eead4, #7dd3fc 50%, #a5b4fc);
     --ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
@@ -157,9 +157,9 @@
   .btn-primary {
     background: var(--grad);
     color: #fff;
-    box-shadow: 0 8px 30px rgba(155, 114, 203, 0.35);
+    box-shadow: 0 8px 30px rgba(14, 165, 233, 0.35);
   }
-  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(155,114,203,0.5); }
+  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(14,165,233,0.5); }
   .btn-ghost { border: 1px solid var(--line); color: var(--fg); background: rgba(255,255,255,0.04); }
   .btn-ghost:hover { background: rgba(255,255,255,0.1); transform: translateY(-3px); }
 
@@ -241,7 +241,7 @@
   .price li::before { content: "✓"; color: var(--g1); font-weight: 700; }
 
   /* CTA / footer */
-  .cta-final { background: radial-gradient(ellipse at center, rgba(75,50,120,0.4), transparent 70%), #000; }
+  .cta-final { background: radial-gradient(ellipse at center, rgba(14,116,144,0.4), transparent 70%), #000; }
   footer {
     min-height: auto;
     padding: 60px clamp(20px, 6vw, 80px) 48px;
@@ -269,6 +269,93 @@
   @keyframes bob { 0%,100%{ transform: translateX(-50%) translateY(0);} 50%{ transform: translateX(-50%) translateY(8px);} }
   @keyframes wheel { 0%{opacity:1; top:6px;} 100%{opacity:0; top:16px;} }
 
+  /* FAQ */
+  .faq-wrap { max-width: 820px; width: 100%; margin-top: 48px; display: flex; flex-direction: column; gap: 14px; }
+  .faq-item {
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: rgba(255,255,255,0.03);
+    overflow: hidden;
+    transition: border-color 0.3s;
+    text-align: left;
+  }
+  .faq-item[open] { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); }
+  .faq-item summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 22px 26px;
+    font-size: clamp(16px, 2vw, 19px);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary .plus {
+    flex: 0 0 auto;
+    width: 26px; height: 26px;
+    position: relative;
+    transition: transform 0.3s var(--ease);
+  }
+  .faq-item summary .plus::before,
+  .faq-item summary .plus::after {
+    content: ""; position: absolute; background: var(--g2); border-radius: 2px;
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+  }
+  .faq-item summary .plus::before { width: 14px; height: 2px; }
+  .faq-item summary .plus::after { width: 2px; height: 14px; transition: transform 0.3s var(--ease); }
+  .faq-item[open] summary .plus::after { transform: translate(-50%, -50%) rotate(90deg); opacity: 0; }
+  .faq-item .answer { padding: 0 26px 24px; color: var(--muted); font-size: 16px; line-height: 1.65; }
+
+  /* Booking form */
+  .form-wrap {
+    max-width: 720px; width: 100%; margin-top: 48px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--line);
+    border-radius: 28px;
+    padding: clamp(28px, 4vw, 48px);
+    text-align: left;
+    backdrop-filter: blur(6px);
+  }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .field { display: flex; flex-direction: column; gap: 8px; }
+  .field.full { grid-column: 1 / -1; }
+  .field label { font-size: 13px; font-weight: 600; color: var(--muted); letter-spacing: 0.02em; }
+  .field label .req { color: var(--g3); }
+  .field input, .field select, .field textarea {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 13px 15px;
+    color: var(--fg);
+    font-family: inherit;
+    font-size: 15px;
+    transition: border-color 0.25s, background 0.25s;
+    width: 100%;
+  }
+  .field input::placeholder, .field textarea::placeholder { color: #6b7075; }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    outline: none; border-color: var(--g2); background: rgba(0,0,0,0.6);
+  }
+  .field select { appearance: none; cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%239aa0a6' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 16px center; padding-right: 40px; }
+  .field textarea { resize: vertical; min-height: 90px; }
+  .form-wrap .btn-primary { width: 100%; justify-content: center; margin-top: 6px; border: none; cursor: pointer; font-size: 17px; }
+  .form-note { color: #6b7075; font-size: 13px; margin-top: 14px; text-align: center; }
+  .success-banner {
+    display: none;
+    max-width: 720px; width: 100%; margin-top: 24px;
+    padding: 18px 24px;
+    border-radius: 16px;
+    background: linear-gradient(110deg, rgba(45,212,191,0.15), rgba(99,102,241,0.15));
+    border: 1px solid rgba(99,102,241,0.4);
+    color: var(--fg); font-weight: 600;
+  }
+  .success-banner.show { display: block; }
+  @media (max-width: 560px) { .form-grid { grid-template-columns: 1fr; } }
+
   @media (prefers-reduced-motion: reduce) {
     * { scroll-behavior: auto !important; }
     .reveal { opacity: 1 !important; transform: none !important; }
@@ -285,6 +372,7 @@
     <a href="#services">Services</a>
     <a href="#why">Why Us</a>
     <a href="#pricing">Pricing</a>
+    <a href="#faq">FAQ</a>
     <a href="#contact" class="nav-cta">Book Now</a>
   </div>
 </nav>
@@ -400,15 +488,102 @@
   </div>
 </section>
 
-<!-- FINAL CTA -->
-<section id="contact" class="cta-final">
-  <p class="eyebrow reveal">Ready When You Are</p>
-  <h2 class="reveal d1">Let's get you <span class="gradient-text">tinted.</span></h2>
-  <p class="lead reveal d2">Text or call for a free quote. Tell us your vehicle and location — we'll bring the shade to your driveway.</p>
-  <div class="btn-row reveal d3">
-    <a href="tel:+18609950923" class="btn btn-primary">📞 Call / Text Jay</a>
-    <a href="mailto:hello@jaystint.com" class="btn btn-ghost">✉️ Email a Quote</a>
+<!-- FAQ -->
+<section id="faq">
+  <div class="bg-img" style="background-image:url('https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&w=2000&q=80');"></div>
+  <p class="eyebrow reveal">Good To Know</p>
+  <h2 class="reveal d1">Questions, <span class="gradient-text">answered.</span></h2>
+  <p class="lead reveal d2">Everything you need to know before we bring the shade to your driveway.</p>
+  <div class="faq-wrap">
+    <details class="faq-item reveal d1">
+      <summary>Do you really come to me?<span class="plus"></span></summary>
+      <div class="answer">Yes — that's our whole thing. We bring a fully equipped mobile setup to your home, office, or wherever your vehicle is parked. All we need is a little space around the car and access to a power outlet.</div>
+    </details>
+    <details class="faq-item reveal d1">
+      <summary>How long does a full tint take?<span class="plus"></span></summary>
+      <div class="answer">A full vehicle typically takes 2–3 hours depending on the make and how many windows. Single windows or a windshield strip are much quicker — usually under an hour.</div>
+    </details>
+    <details class="faq-item reveal d2">
+      <summary>How long before I can roll my windows down?<span class="plus"></span></summary>
+      <div class="answer">We recommend leaving windows up for 3–5 days while the film cures. You may notice slight haziness or small water pockets at first — this is normal and clears as it dries.</div>
+    </details>
+    <details class="faq-item reveal d2">
+      <summary>What's the difference between carbon and ceramic?<span class="plus"></span></summary>
+      <div class="answer">Both block 99% of UV and never fade or turn purple. Ceramic goes further — significantly more infrared heat rejection for a cooler cabin, with zero interference to phone or GPS signals. It's our most popular choice.</div>
+    </details>
+    <details class="faq-item reveal d3">
+      <summary>Is window tint legal in my state?<span class="plus"></span></summary>
+      <div class="answer">Tint darkness laws vary by state and by window. We'll walk you through the legal limits for your area and recommend a shade that looks great and keeps you compliant.</div>
+    </details>
+    <details class="faq-item reveal d3">
+      <summary>Is the work guaranteed?<span class="plus"></span></summary>
+      <div class="answer">Absolutely. Every install is backed by a lifetime warranty against bubbling, peeling, fading, and discoloration. If anything ever goes wrong with the film, we make it right.</div>
+    </details>
   </div>
+</section>
+
+<!-- BOOKING -->
+<section id="contact" class="cta-final">
+  <p class="eyebrow reveal">Book Your Appointment</p>
+  <h2 class="reveal d1">Let's get you <span class="gradient-text">tinted.</span></h2>
+  <p class="lead reveal d2">Fill out the form and we'll text you back to confirm your time. Prefer to talk? Call or text Jay directly at <a href="tel:+18609950923" style="color:var(--fg);border-bottom:1px solid var(--g2);">(860) 995-0923</a>.</p>
+
+  <div id="thanks" class="success-banner reveal">✅ Thanks! Your request is in. We'll text you shortly to confirm your appointment.</div>
+
+  <form class="form-wrap reveal d3" action="https://formsubmit.co/YOUR_EMAIL_HERE" method="POST">
+    <!-- FormSubmit config -->
+    <input type="hidden" name="_subject" value="New booking request — Jay's Tint" />
+    <input type="hidden" name="_captcha" value="false" />
+    <input type="hidden" name="_template" value="table" />
+    <input type="hidden" name="_next" value="https://mrmoe28.github.io/jays-tint/?submitted=1#contact" />
+    <input type="text" name="_honey" style="display:none" />
+
+    <div class="form-grid">
+      <div class="field">
+        <label>Full name <span class="req">*</span></label>
+        <input type="text" name="Name" placeholder="Your name" required />
+      </div>
+      <div class="field">
+        <label>Phone <span class="req">*</span></label>
+        <input type="tel" name="Phone" placeholder="(860) 000-0000" required />
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" name="Email" placeholder="you@email.com" />
+      </div>
+      <div class="field">
+        <label>Vehicle <span class="req">*</span></label>
+        <input type="text" name="Vehicle" placeholder="Year, make &amp; model" required />
+      </div>
+      <div class="field">
+        <label>Service <span class="req">*</span></label>
+        <select name="Service" required>
+          <option value="" disabled selected>Choose a service</option>
+          <option>Full Auto Tint — Carbon</option>
+          <option>Full Auto Tint — Ceramic</option>
+          <option>Single Windows / Windshield Strip</option>
+          <option>Tint Removal</option>
+          <option>Residential / Commercial</option>
+          <option>Not sure — need advice</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Preferred date</label>
+        <input type="date" name="Preferred Date" />
+      </div>
+      <div class="field full">
+        <label>Your location <span class="req">*</span></label>
+        <input type="text" name="Location" placeholder="Address or area where we'll meet the vehicle" required />
+      </div>
+      <div class="field full">
+        <label>Anything else?</label>
+        <textarea name="Notes" placeholder="Tint shade preference, timing, questions..."></textarea>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Request My Appointment →</button>
+    <p class="form-note">No spam — we only use your info to confirm your booking.</p>
+  </form>
 </section>
 
 <footer>
@@ -425,6 +600,12 @@
 <script>
   // Year
   document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Show success banner after a booking submit (FormSubmit redirects back with ?submitted=1)
+  if (new URLSearchParams(location.search).has('submitted')) {
+    const b = document.getElementById('thanks');
+    if (b) { b.classList.add('show', 'in'); }
+  }
 
   // Nav border on scroll + progress bar
   const nav = document.getElementById('nav');
