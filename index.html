@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Jay's Tint — Premium Auto &amp; Mobile Window Tinting</title>
+<meta name="description" content="Jay's Tint — premium mobile and auto window tinting. We come to you. Ceramic, carbon, and premium films with a lifetime warranty." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #000000;
+    --fg: #f5f5f7;
+    --muted: #9aa0a6;
+    --line: rgba(255, 255, 255, 0.08);
+    --g1: #4285f4; /* blue */
+    --g2: #9b72cb; /* purple */
+    --g3: #d96570; /* pink/red */
+    --grad: linear-gradient(110deg, var(--g1), var(--g2) 45%, var(--g3));
+    --grad-soft: linear-gradient(110deg, #8ab4f8, #c58af9 50%, #f28b82);
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* Scroll progress bar */
+  .progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    width: 0%;
+    background: var(--grad);
+    z-index: 100;
+    transition: width 0.1s linear;
+  }
+
+  /* Nav */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px clamp(20px, 5vw, 64px);
+    z-index: 90;
+    backdrop-filter: blur(12px);
+    background: rgba(0, 0, 0, 0.35);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.4s var(--ease), background 0.4s var(--ease);
+  }
+  nav.scrolled { border-bottom-color: var(--line); background: rgba(0,0,0,0.6); }
+  .brand {
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: -0.02em;
+  }
+  .brand span {
+    background: var(--grad-soft);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .nav-links { display: flex; gap: 32px; align-items: center; }
+  .nav-links a { color: var(--muted); font-size: 15px; font-weight: 500; transition: color 0.25s; }
+  .nav-links a:hover { color: var(--fg); }
+  .nav-cta {
+    background: var(--fg);
+    color: #000 !important;
+    padding: 10px 20px;
+    border-radius: 999px;
+    font-weight: 600;
+  }
+  @media (max-width: 720px) { .nav-links a:not(.nav-cta) { display: none; } }
+
+  /* Section base */
+  section {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px clamp(20px, 6vw, 80px);
+    overflow: hidden;
+  }
+
+  /* Full-section background image + darkening */
+  .bg-img {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    z-index: -2;
+    transform: scale(1.1);
+    transition: transform 1.2s var(--ease);
+  }
+  section.in .bg-img { transform: scale(1); }
+  .bg-img::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.85) 100%);
+  }
+
+  .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.28em;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  h1, h2 { letter-spacing: -0.03em; line-height: 1.05; font-weight: 800; }
+  h1 { font-size: clamp(44px, 8vw, 104px); }
+  h2 { font-size: clamp(34px, 5.5vw, 68px); }
+  .gradient-text {
+    background: var(--grad-soft);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .lead {
+    max-width: 640px;
+    font-size: clamp(17px, 2.2vw, 21px);
+    color: var(--muted);
+    margin-top: 28px;
+    font-weight: 400;
+  }
+
+  /* Buttons */
+  .btn-row { display: flex; gap: 16px; margin-top: 44px; flex-wrap: wrap; justify-content: center; }
+  .btn {
+    padding: 15px 30px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 16px;
+    transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease), opacity 0.25s;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .btn-primary {
+    background: var(--grad);
+    color: #fff;
+    box-shadow: 0 8px 30px rgba(155, 114, 203, 0.35);
+  }
+  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(155,114,203,0.5); }
+  .btn-ghost { border: 1px solid var(--line); color: var(--fg); background: rgba(255,255,255,0.04); }
+  .btn-ghost:hover { background: rgba(255,255,255,0.1); transform: translateY(-3px); }
+
+  /* Scroll-reveal: rise + converge to center */
+  .reveal {
+    opacity: 0;
+    transform: translateY(60px) scale(0.96);
+    transition: opacity 1s var(--ease), transform 1s var(--ease);
+    will-change: transform, opacity;
+  }
+  .reveal.in { opacity: 1; transform: translateY(0) scale(1); }
+  .reveal.from-left { transform: translateX(-80px) translateY(20px); }
+  .reveal.from-right { transform: translateX(80px) translateY(20px); }
+  .reveal.from-left.in, .reveal.from-right.in { transform: translateX(0) translateY(0); }
+  .d1 { transition-delay: 0.1s; }
+  .d2 { transition-delay: 0.22s; }
+  .d3 { transition-delay: 0.34s; }
+  .d4 { transition-delay: 0.46s; }
+
+  /* Services grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    max-width: 1100px;
+    width: 100%;
+    margin-top: 56px;
+  }
+  .card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    padding: 40px 32px;
+    text-align: left;
+    backdrop-filter: blur(6px);
+    transition: transform 0.4s var(--ease), border-color 0.4s, background 0.4s;
+  }
+  .card:hover { transform: translateY(-8px); border-color: rgba(255,255,255,0.22); background: rgba(255,255,255,0.07); }
+  .card .icon {
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    background: var(--grad);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; margin-bottom: 22px;
+  }
+  .card h3 { font-size: 22px; font-weight: 700; margin-bottom: 12px; letter-spacing: -0.01em; }
+  .card p { color: var(--muted); font-size: 15px; }
+
+  /* Stats */
+  .stats { display: flex; gap: clamp(24px, 6vw, 80px); flex-wrap: wrap; justify-content: center; margin-top: 56px; }
+  .stat .num {
+    font-size: clamp(40px, 6vw, 72px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    background: var(--grad-soft);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .stat .label { color: var(--muted); font-size: 14px; text-transform: uppercase; letter-spacing: 0.15em; margin-top: 6px; }
+
+  /* Pricing */
+  .price-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; max-width: 1000px; width: 100%; margin-top: 56px; }
+  .price {
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    padding: 40px 32px;
+    text-align: left;
+    background: rgba(255,255,255,0.03);
+    position: relative;
+    transition: transform 0.4s var(--ease), border-color 0.4s;
+  }
+  .price:hover { transform: translateY(-8px); }
+  .price.featured { border-color: transparent; background: linear-gradient(#0b0b0d, #0b0b0d) padding-box, var(--grad) border-box; border: 1px solid transparent; }
+  .price .tag { position: absolute; top: 24px; right: 24px; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--g2); font-weight: 700; }
+  .price h3 { font-size: 20px; margin-bottom: 4px; }
+  .price .amount { font-size: 44px; font-weight: 800; letter-spacing: -0.03em; margin: 16px 0 4px; }
+  .price .amount small { font-size: 16px; color: var(--muted); font-weight: 500; }
+  .price ul { list-style: none; margin-top: 24px; display: flex; flex-direction: column; gap: 12px; }
+  .price li { color: var(--muted); font-size: 15px; display: flex; gap: 10px; align-items: flex-start; }
+  .price li::before { content: "✓"; color: var(--g1); font-weight: 700; }
+
+  /* CTA / footer */
+  .cta-final { background: radial-gradient(ellipse at center, rgba(75,50,120,0.4), transparent 70%), #000; }
+  footer {
+    min-height: auto;
+    padding: 60px clamp(20px, 6vw, 80px) 48px;
+    border-top: 1px solid var(--line);
+    display: flex; flex-direction: column; gap: 20px; align-items: center; text-align: center;
+  }
+  footer .brand { font-size: 24px; }
+  .contact-row { display: flex; gap: 32px; flex-wrap: wrap; justify-content: center; color: var(--muted); font-size: 15px; }
+  .contact-row a:hover { color: var(--fg); }
+  .copyright { color: #55595e; font-size: 13px; margin-top: 12px; }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 36px; left: 50%;
+    transform: translateX(-50%);
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    animation: bob 2s infinite ease-in-out;
+  }
+  .scroll-hint .mouse { width: 22px; height: 34px; border: 2px solid var(--muted); border-radius: 12px; position: relative; }
+  .scroll-hint .mouse::after { content:""; position:absolute; top:6px; left:50%; transform:translateX(-50%); width:3px; height:6px; border-radius:2px; background: var(--muted); animation: wheel 1.6s infinite; }
+  @keyframes bob { 0%,100%{ transform: translateX(-50%) translateY(0);} 50%{ transform: translateX(-50%) translateY(8px);} }
+  @keyframes wheel { 0%{opacity:1; top:6px;} 100%{opacity:0; top:16px;} }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { scroll-behavior: auto !important; }
+    .reveal { opacity: 1 !important; transform: none !important; }
+    .scroll-hint { animation: none; }
+  }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<nav id="nav">
+  <div class="brand">Jay's<span>Tint</span></div>
+  <div class="nav-links">
+    <a href="#services">Services</a>
+    <a href="#why">Why Us</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#contact" class="nav-cta">Book Now</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="bg-img" style="background-image:url('https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=2000&q=80');"></div>
+  <p class="eyebrow reveal">Auto &amp; Mobile Window Tinting</p>
+  <h1 class="reveal d1">Shade that comes<br /><span class="gradient-text">to you.</span></h1>
+  <p class="lead reveal d2">Premium ceramic and carbon window film, installed at your home or office. Beat the heat, protect your interior, and ride in style — Jay's Tint brings the shop to your driveway.</p>
+  <div class="btn-row reveal d3">
+    <a href="#contact" class="btn btn-primary">Book Mobile Service →</a>
+    <a href="#services" class="btn btn-ghost">Explore Services</a>
+  </div>
+  <div class="scroll-hint"><div class="mouse"></div>Scroll</div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="bg-img" style="background-image:url('https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?auto=format&fit=crop&w=2000&q=80');"></div>
+  <p class="eyebrow reveal">What We Do</p>
+  <h2 class="reveal d1">Tinting done <span class="gradient-text">right.</span></h2>
+  <p class="lead reveal d2">From full vehicle wraps to a single windshield strip — precision-cut film and a bubble-free, lifetime-warranted finish.</p>
+  <div class="grid">
+    <div class="card reveal from-left d1">
+      <div class="icon">🚗</div>
+      <h3>Full Auto Tint</h3>
+      <p>Complete vehicle tinting with premium ceramic or carbon film. Computer-cut for a perfect factory fit on every window.</p>
+    </div>
+    <div class="card reveal d2">
+      <div class="icon">📍</div>
+      <h3>Mobile Service</h3>
+      <p>We come to you. Home, work, or anywhere — a fully equipped mobile setup means zero waiting rooms and zero hassle.</p>
+    </div>
+    <div class="card reveal from-right d3">
+      <div class="icon">☀️</div>
+      <h3>Ceramic Heat Rejection</h3>
+      <p>Block up to 99% of UV and a huge share of infrared heat. Keep your cabin cool and your interior from fading.</p>
+    </div>
+    <div class="card reveal from-left d2">
+      <div class="icon">🪟</div>
+      <h3>Windshield &amp; Sunstrip</h3>
+      <p>Clear ceramic windshield film and custom sun strips for glare reduction without sacrificing visibility.</p>
+    </div>
+    <div class="card reveal d3">
+      <div class="icon">🏠</div>
+      <h3>Residential &amp; Commercial</h3>
+      <p>Home and storefront window film for privacy, energy savings, and UV protection — mobile install included.</p>
+    </div>
+    <div class="card reveal from-right d4">
+      <div class="icon">🛡️</div>
+      <h3>Tint Removal</h3>
+      <p>Clean removal of old, bubbled, or purple film — glass left spotless and ready for a fresh premium install.</p>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section id="why">
+  <div class="bg-img" style="background-image:url('https://images.unsplash.com/photo-1542282088-fe8426682b8f?auto=format&fit=crop&w=2000&q=80');"></div>
+  <p class="eyebrow reveal">Why Jay's Tint</p>
+  <h2 class="reveal d1">Built on <span class="gradient-text">trust &amp; craft.</span></h2>
+  <p class="lead reveal d2">Every install is backed by a lifetime warranty and years of hands-on experience. No bubbles, no peeling, no purple.</p>
+  <div class="stats">
+    <div class="stat reveal d1"><div class="num">2K+</div><div class="label">Cars Tinted</div></div>
+    <div class="stat reveal d2"><div class="num">99%</div><div class="label">UV Blocked</div></div>
+    <div class="stat reveal d3"><div class="num">5.0★</div><div class="label">Avg Rating</div></div>
+    <div class="stat reveal d4"><div class="num">Life</div><div class="label">Warranty</div></div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="bg-img" style="background-image:url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=2000&q=80');"></div>
+  <p class="eyebrow reveal">Straightforward Pricing</p>
+  <h2 class="reveal d1">Pick your <span class="gradient-text">shade.</span></h2>
+  <p class="lead reveal d2">Transparent packages, mobile install included. Final quote depends on your vehicle — text us for an exact price.</p>
+  <div class="price-grid">
+    <div class="price reveal from-left d1">
+      <h3>Carbon</h3>
+      <div class="amount">$199<small> / full car</small></div>
+      <p style="color:var(--muted);font-size:14px;">Great looks, solid heat rejection.</p>
+      <ul>
+        <li>Non-fading carbon film</li>
+        <li>Blocks 99% UV</li>
+        <li>Lifetime warranty</li>
+        <li>Mobile install included</li>
+      </ul>
+    </div>
+    <div class="price featured reveal d2">
+      <span class="tag">Most Popular</span>
+      <h3>Ceramic</h3>
+      <div class="amount">$349<small> / full car</small></div>
+      <p style="color:var(--muted);font-size:14px;">Max heat rejection, crystal clarity.</p>
+      <ul>
+        <li>Premium ceramic film</li>
+        <li>Superior infrared heat block</li>
+        <li>No signal interference</li>
+        <li>Lifetime warranty + mobile install</li>
+      </ul>
+    </div>
+    <div class="price reveal from-right d3">
+      <h3>Single Windows</h3>
+      <div class="amount">$45<small> / window</small></div>
+      <p style="color:var(--muted);font-size:14px;">Two fronts, a strip, or a redo.</p>
+      <ul>
+        <li>Match your existing tint</li>
+        <li>Windshield &amp; sunstrips</li>
+        <li>Tint removal available</li>
+        <li>Mobile install included</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section id="contact" class="cta-final">
+  <p class="eyebrow reveal">Ready When You Are</p>
+  <h2 class="reveal d1">Let's get you <span class="gradient-text">tinted.</span></h2>
+  <p class="lead reveal d2">Text or call for a free quote. Tell us your vehicle and location — we'll bring the shade to your driveway.</p>
+  <div class="btn-row reveal d3">
+    <a href="tel:+10000000000" class="btn btn-primary">📞 Call / Text Jay</a>
+    <a href="mailto:hello@jaystint.com" class="btn btn-ghost">✉️ Email a Quote</a>
+  </div>
+</section>
+
+<footer>
+  <div class="brand">Jay's<span style="background:var(--grad-soft);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">Tint</span></div>
+  <div class="contact-row">
+    <a href="tel:+10000000000">📞 (000) 000-0000</a>
+    <a href="mailto:hello@jaystint.com">✉️ hello@jaystint.com</a>
+    <a href="#hero">↑ Back to top</a>
+  </div>
+  <p style="color:var(--muted);font-size:14px;">Auto • Mobile • Residential • Commercial Window Tinting</p>
+  <p class="copyright">© <span id="year"></span> Jay's Tint. All rights reserved. Mobile window tinting done right.</p>
+</footer>
+
+<script>
+  // Year
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Nav border on scroll + progress bar
+  const nav = document.getElementById('nav');
+  const progress = document.getElementById('progress');
+  function onScroll() {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    progress.style.width = (window.scrollY / h) * 100 + '%';
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Reveal on scroll — elements rise and converge to center
+  const revealObs = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) e.target.classList.add('in');
+      else e.target.classList.remove('in'); // re-animate when scrolling back
+    });
+  }, { threshold: 0.18 });
+  document.querySelectorAll('.reveal').forEach((el) => revealObs.observe(el));
+
+  // Section-level in (for bg zoom)
+  const sectionObs = new IntersectionObserver((entries) => {
+    entries.forEach((e) => e.target.classList.toggle('in', e.isIntersecting));
+  }, { threshold: 0.25 });
+  document.querySelectorAll('section').forEach((s) => sectionObs.observe(s));
+
+  // Parallax on background images
+  const bgs = [...document.querySelectorAll('.bg-img')];
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    bgs.forEach((bg) => {
+      const rect = bg.parentElement.getBoundingClientRect();
+      const offset = (rect.top) * 0.15;
+      bg.style.transform = `scale(1.1) translateY(${offset}px)`;
+    });
+  }, { passive: true });
+</script>
+</body>
+</html>
