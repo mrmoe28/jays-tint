@@ -440,8 +440,34 @@
   .dp-day.empty { visibility: hidden; pointer-events: none; }
   .dp-day:hover:not(:disabled):not(.empty) { background: rgba(255,255,255,0.1); }
   .dp-day:disabled { color: #3a3d42; cursor: not-allowed; }
-  .dp-day.today { border: 1px solid var(--line); }
+  .dp-day.today {
+    position: relative;
+    border: 1px solid var(--g2);
+    color: var(--g2);
+    font-weight: 700;
+  }
+  /* Dot under today's number, so the marker survives colour-blindness and low contrast */
+  .dp-day.today::after {
+    content: '';
+    position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
+    width: 4px; height: 4px; border-radius: 50%;
+    background: var(--g2);
+  }
   .dp-day.selected { background: var(--grad); color: #fff; font-weight: 600; }
+  /* When today is also the selected day, the gradient wins — flip the marker to white */
+  .dp-day.today.selected { color: #fff; border-color: transparent; }
+  .dp-day.today.selected::after { background: #fff; }
+
+  .dp-legend {
+    display: flex; align-items: center; gap: 6px;
+    margin-top: 12px; padding-top: 10px;
+    border-top: 1px solid var(--line);
+    font-size: 11px; color: var(--muted);
+  }
+  .dp-legend .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--g2); flex: 0 0 auto;
+  }
 
   /* Floating chat button */
   .chat-fab {
@@ -685,6 +711,7 @@
             </div>
             <div class="dp-weekdays"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div>
             <div class="dp-grid" id="dpGrid"></div>
+            <p class="dp-legend"><span class="dot" aria-hidden="true"></span> Today</p>
           </div>
         </div>
       </div>
@@ -788,7 +815,11 @@
         cell.className = 'dp-day';
         cell.textContent = d;
         if (date < today) cell.disabled = true;
-        if (date.getTime() === today.getTime()) cell.classList.add('today');
+        if (date.getTime() === today.getTime()) {
+          cell.classList.add('today');
+          cell.title = 'Today';
+          cell.setAttribute('aria-current', 'date');
+        }
         if (selected && date.getTime() === selected.getTime()) cell.classList.add('selected');
         cell.addEventListener('click', (e) => {
           e.stopPropagation();
