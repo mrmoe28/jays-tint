@@ -1,4 +1,4 @@
-# Jay's Tint
+# Tint 2 Go
 
 Premium auto & mobile window tinting — single-page site for GitHub Pages.
 
