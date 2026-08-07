@@ -1007,7 +1007,7 @@
 </script>
 
 <!-- Custom floating chat button -->
-<button id="chatFab" class="chat-fab" aria-label="Open live chat" aria-expanded="false" aria-controls="kbPanel">
+<button type="button" id="chatFab" class="chat-fab" aria-label="Open live chat" aria-expanded="false" aria-controls="kbPanel">
   <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.5 8.5 0 0 1-.9-3.8A8.38 8.38 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z"/></svg>
   <span>Chat with us</span>
 </button>
@@ -1019,14 +1019,14 @@
       <h3>Instant answers</h3>
       <p>Search common questions — or talk to Jay directly.</p>
     </div>
-    <button class="kb-close" id="kbClose" aria-label="Close">&times;</button>
+    <button type="button" class="kb-close" id="kbClose" aria-label="Close">&times;</button>
   </div>
   <div class="kb-search">
-    <input type="search" id="kbSearch" placeholder="Ask something — price, legal, ceramic…" autocomplete="off" aria-label="Search questions" />
+    <input type="search" id="kbSearch" placeholder="Ask something — price, legal, ceramic…" autocomplete="off" aria-label="Search questions">
   </div>
   <div class="kb-list" id="kbList"></div>
   <div class="kb-foot">
-    <button id="kbLive">Still stuck? Chat with a person</button>
+    <button type="button" id="kbLive">Still stuck? Chat with a person</button>
     <a href="tel:+18609950923">Or call / text (860) 995-0923</a>
   </div>
 </div>
