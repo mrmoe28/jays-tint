@@ -1,0 +1,6 @@
+# Tint 2 Go — https://www.tint2go.tech
+# A real file here so the host serves plain text instead of letting the
+# catch-all route answer /robots.txt with the whole index.html page.
+
+User-agent: *
+Allow: /
