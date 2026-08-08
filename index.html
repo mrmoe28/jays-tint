@@ -91,33 +91,64 @@
 
 <!-- LCP: start the hero background fetch from the first bytes of the document.
      One tier matches per viewport, and each href is byte-identical to the
-     background-image the stylesheet below asks for, so nothing downloads twice. -->
-<link rel="preconnect" href="https://images.unsplash.com" crossorigin />
-<link rel="preload" as="image" fetchpriority="high" media="(max-width: 768px)"
-      href="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&amp;fit=crop&amp;w=1000&amp;q=80" />
-<link rel="preload" as="image" fetchpriority="high" media="(min-width: 768.02px) and (max-width: 1439.98px)"
-      href="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&amp;fit=crop&amp;w=1600&amp;q=80" />
-<link rel="preload" as="image" fetchpriority="high" media="(min-width: 1440px)"
-      href="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&amp;fit=crop&amp;w=2000&amp;q=80" />
+     background-image the stylesheet below asks for, so nothing downloads twice.
 
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<!-- Fetched at high priority but off the critical path: Inter is a cross-origin
-     round trip that used to block the first paint.
+     Self-hosted WebP rather than Unsplash. This request is the whole ballgame
+     for the reported LCP: Lighthouse's Lantern model estimates LCP as the
+     latest simulated end time of every node started before the paint, minus
+     low-priority images only — so a fetchpriority=high hero image is charged
+     in full even though the h1, not the image, is the LCP element. Unsplash
+     was serving 132KB over a fresh cross-origin connection: 1672ms simulated,
+     which alone set LCP. At 42KB on the origin the document already opened,
+     it is no longer the slowest node in the graph.
+
+     q=65 rather than Unsplash's q=80. The radial gradient in .bg-img::after
+     darkens this photo to 55-85% black, so the detail the extra bytes buy is
+     not visible; SSIM against the 2400px master is 0.91. -->
+<link rel="preload" as="image" fetchpriority="high" media="(max-width: 768px)"
+      href="/images/hero-1000.webp" />
+<link rel="preload" as="image" fetchpriority="high" media="(min-width: 768.02px) and (max-width: 1439.98px)"
+      href="/images/hero-1600.webp" />
+<link rel="preload" as="image" fetchpriority="high" media="(min-width: 1440px)"
+      href="/images/hero-2000.webp" />
+
+<!-- Inter is self-hosted rather than pulled from Google Fonts.
+
+     Google Fonts cost the hero h1 — the LCP element — two cross-origin round
+     trips it had to wait on: googleapis.com for the @font-face CSS, then
+     gstatic.com for the woff2 it points at. Preloading the stylesheet did not
+     take it off that dependency chain. Served from this origin the font rides
+     the connection the document already opened, and the preload below starts
+     it from the first bytes of the response instead of after a CSS parse.
+
+     One file covers every weight the page uses: Google serves a single latin
+     variable woff2 for all of them, so the six weights requested from the API
+     were always the same download. Subset here with pyftsubset to the glyphs
+     this page can render — printable ASCII, the Latin-1 letters a name typed
+     into the booking form might need, and the few marks in the copy (— • …
+     → ↑ ©) — which takes it from 48KB to 33KB. The wght axis is untouched, so
+     300-800 still interpolate. Re-run the subset if new copy introduces a
+     character outside that set, or it renders in the fallback face.
 
      display=optional, not swap. With swap, a late Inter re-lays out the hero
      copy, and that repaint registers as a NEW, later LCP candidate — across six
      live runs it put LCP over 2.5s in half of them (median 2.88s) and it is the
      same reflow behind the 0.04-0.07 CLS. optional gives the font a short
-     window and otherwise leaves the first paint alone; it still downloads and
-     is cached, so it applies from the next navigation on. -->
-<link rel="preload" as="style"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=optional"
-      onload="this.rel='stylesheet'" />
-<noscript>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=optional" rel="stylesheet" />
-</noscript>
+     window and otherwise leaves the first paint alone. -->
+<link rel="preload" as="font" type="font/woff2" href="/fonts/inter-latin-var.woff2" crossorigin />
 <style>
+  /* Variable Inter, latin subset — the unicode-range Google served for it.
+     Declared inline so the face exists before the first paint; the file
+     itself is preloaded above. */
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 300 800;
+    font-display: optional;
+    src: url('/fonts/inter-latin-var.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+
   :root {
     --bg: #000000;
     --fg: #f5f5f7;
@@ -226,20 +257,21 @@
     background: radial-gradient(ellipse at center, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.85) 100%);
   }
 
-  /* Hero background is the LCP element, so it lives here rather than in an
-     inline style — that lets it be preloaded in <head> and sized per viewport.
-     A phone pulls ~135KB instead of the ~400KB full-width original. */
+  /* Hero background sits behind the LCP element, so it lives here rather than
+     in an inline style — that lets it be preloaded in <head> and sized per
+     viewport. A phone pulls 42KB instead of the ~400KB full-width original.
+     Each URL matches a preload above exactly, so nothing downloads twice. */
   #hero .bg-img {
-    background-image: url('https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1000&q=80');
+    background-image: url('/images/hero-1000.webp');
   }
   @media (min-width: 768.02px) {
     #hero .bg-img {
-      background-image: url('https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1600&q=80');
+      background-image: url('/images/hero-1600.webp');
     }
   }
   @media (min-width: 1440px) {
     #hero .bg-img {
-      background-image: url('https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=2000&q=80');
+      background-image: url('/images/hero-2000.webp');
     }
   }
 
@@ -329,91 +361,6 @@
     to   { transform: none; }
   }
 
-  /* Services grid */
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 24px;
-    max-width: 1100px;
-    width: 100%;
-    margin-top: 56px;
-  }
-  .card {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid var(--line);
-    border-radius: 24px;
-    padding: 40px 32px;
-    text-align: left;
-    backdrop-filter: blur(6px);
-    transition: transform 0.4s var(--ease), border-color 0.4s, background 0.4s;
-  }
-  .card:hover {
-    transform: translateY(-8px);
-    border-color: transparent;
-    background: linear-gradient(rgba(10,12,16,0.92), rgba(10,12,16,0.92)) padding-box, var(--grad) border-box;
-    box-shadow: 0 18px 45px rgba(14,165,233,0.22);
-  }
-  .card .icon {
-    width: 52px; height: 52px;
-    border-radius: 14px;
-    background: var(--grad);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 24px; margin-bottom: 22px;
-  }
-  .card h3 { font-size: 22px; font-weight: 700; margin-bottom: 12px; letter-spacing: -0.01em; }
-  .card p { color: var(--muted); font-size: 15px; }
-
-  /* Stats */
-  .stats { display: flex; gap: clamp(24px, 6vw, 80px); flex-wrap: wrap; justify-content: center; margin-top: 56px; }
-  .stat .num {
-    font-size: clamp(40px, 6vw, 72px);
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    background: var(--grad-soft);
-    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-  }
-  .stat .label { color: var(--muted); font-size: 14px; text-transform: uppercase; letter-spacing: 0.15em; margin-top: 6px; }
-
-  /* Pricing */
-  .price-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; max-width: 1000px; width: 100%; margin-top: 56px; }
-  .price {
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 24px;
-    padding: 40px 32px;
-    text-align: left;
-    background: rgba(8,9,12,0.72);
-    backdrop-filter: blur(10px);
-    position: relative;
-    transition: transform 0.4s var(--ease), border-color 0.4s;
-  }
-  .price:hover {
-    transform: translateY(-8px);
-    border-color: transparent;
-    background: linear-gradient(rgba(10,12,16,0.92), rgba(10,12,16,0.92)) padding-box, var(--grad) border-box;
-    box-shadow: 0 18px 45px rgba(14,165,233,0.22);
-  }
-  .price.featured { background: rgba(12,14,18,0.85); }
-  .price .tag { position: absolute; top: 24px; right: 24px; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--g2); font-weight: 700; }
-  .price h3 { font-size: 20px; margin-bottom: 4px; }
-  .price .amount { font-size: 44px; font-weight: 800; letter-spacing: -0.03em; margin: 16px 0 4px; }
-  .price .amount small { font-size: 16px; color: var(--muted); font-weight: 500; }
-  .price ul { list-style: none; margin-top: 24px; display: flex; flex-direction: column; gap: 12px; }
-  .price li { color: #d4d8dd; font-size: 15px; display: flex; gap: 10px; align-items: flex-start; }
-  .price li::before { content: "✓"; color: var(--g1); font-weight: 700; }
-
-  /* CTA / footer */
-  .cta-final { background: radial-gradient(ellipse at center, rgba(14,116,144,0.4), transparent 70%), #000; }
-  footer {
-    min-height: auto;
-    padding: 60px clamp(20px, 6vw, 80px) 48px;
-    border-top: 1px solid var(--line);
-    display: flex; flex-direction: column; gap: 20px; align-items: center; text-align: center;
-  }
-  footer .brand { font-size: 24px; }
-  .contact-row { display: flex; gap: 32px; flex-wrap: wrap; justify-content: center; color: var(--muted); font-size: 15px; }
-  .contact-row a:hover { color: var(--fg); }
-  .copyright { color: #55595e; font-size: 13px; margin-top: 12px; }
-
   .scroll-hint {
     position: absolute;
     bottom: 36px; left: 50%;
@@ -429,178 +376,6 @@
   .scroll-hint .mouse::after { content:""; position:absolute; top:6px; left:50%; transform:translateX(-50%); width:3px; height:6px; border-radius:2px; background: var(--muted); animation: wheel 1.6s infinite; }
   @keyframes bob { 0%,100%{ transform: translateX(-50%) translateY(0);} 50%{ transform: translateX(-50%) translateY(8px);} }
   @keyframes wheel { 0%{opacity:1; top:6px;} 100%{opacity:0; top:16px;} }
-
-  /* FAQ */
-  .faq-wrap { max-width: 820px; width: 100%; margin-top: 48px; display: flex; flex-direction: column; gap: 14px; }
-  .faq-item {
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 18px;
-    background: rgba(8,9,12,0.72);
-    backdrop-filter: blur(10px);
-    overflow: hidden;
-    transition: border-color 0.3s, background 0.3s;
-    text-align: left;
-  }
-  .faq-item[open] { border-color: rgba(45,212,191,0.4); background: rgba(12,14,18,0.85); }
-  .faq-item summary {
-    list-style: none;
-    cursor: pointer;
-    padding: 22px 26px;
-    font-size: clamp(16px, 2vw, 19px);
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-  }
-  .faq-item summary::-webkit-details-marker { display: none; }
-  .faq-item summary .plus {
-    flex: 0 0 auto;
-    width: 26px; height: 26px;
-    position: relative;
-    transition: transform 0.3s var(--ease);
-  }
-  .faq-item summary .plus::before,
-  .faq-item summary .plus::after {
-    content: ""; position: absolute; background: var(--g2); border-radius: 2px;
-    top: 50%; left: 50%; transform: translate(-50%, -50%);
-  }
-  .faq-item summary .plus::before { width: 14px; height: 2px; }
-  .faq-item summary .plus::after { width: 2px; height: 14px; transition: transform 0.3s var(--ease); }
-  .faq-item[open] summary .plus::after { transform: translate(-50%, -50%) rotate(90deg); opacity: 0; }
-  .faq-item .answer { padding: 0 26px 24px; color: #d4d8dd; font-size: 16px; line-height: 1.65; }
-
-  /* Booking form */
-  .form-wrap {
-    max-width: 720px; width: 100%; margin-top: 48px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid var(--line);
-    border-radius: 28px;
-    padding: clamp(28px, 4vw, 48px);
-    text-align: left;
-    backdrop-filter: blur(6px);
-  }
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-  .field { display: flex; flex-direction: column; gap: 8px; }
-  .field.full { grid-column: 1 / -1; }
-  .field label { font-size: 13px; font-weight: 600; color: var(--muted); letter-spacing: 0.02em; }
-  .field label .req { color: var(--g3); }
-  .field input, .field select, .field textarea {
-    background: rgba(0,0,0,0.4);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 13px 15px;
-    color: var(--fg);
-    font-family: inherit;
-    font-size: 15px;
-    transition: border-color 0.25s, background 0.25s;
-    width: 100%;
-  }
-  .field input::placeholder, .field textarea::placeholder { color: #6b7075; }
-  .field input:focus, .field select:focus, .field textarea:focus {
-    outline: none; border-color: var(--g2); background: rgba(0,0,0,0.6);
-  }
-  .field select { appearance: none; cursor: pointer;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%239aa0a6' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat; background-position: right 16px center; padding-right: 40px; }
-  .field textarea { resize: vertical; min-height: 90px; }
-  .form-wrap .btn-primary { width: 100%; justify-content: center; margin-top: 6px; border: none; cursor: pointer; font-size: 17px; }
-  .form-note { color: #6b7075; font-size: 13px; margin-top: 14px; text-align: center; }
-  .success-banner {
-    display: none;
-    max-width: 720px; width: 100%; margin-top: 24px;
-    padding: 18px 24px;
-    border-radius: 16px;
-    background: linear-gradient(110deg, rgba(45,212,191,0.15), rgba(99,102,241,0.15));
-    border: 1px solid rgba(99,102,241,0.4);
-    color: var(--fg); font-weight: 600;
-  }
-  .success-banner.show { display: block; }
-  @media (max-width: 560px) { .form-grid { grid-template-columns: 1fr; } }
-
-  /* Custom calendar dropdown */
-  .datepicker { position: relative; }
-  .dp-trigger {
-    width: 100%;
-    display: flex; align-items: center; justify-content: space-between; gap: 10px;
-    background: rgba(0,0,0,0.4);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 13px 15px;
-    color: var(--fg);
-    font-family: inherit; font-size: 15px;
-    cursor: pointer; text-align: left;
-    transition: border-color 0.25s, background 0.25s;
-  }
-  .dp-trigger:hover { border-color: rgba(255,255,255,0.2); }
-  .dp-trigger.open { border-color: var(--g2); background: rgba(0,0,0,0.6); }
-  .dp-trigger svg { stroke: var(--muted); flex: 0 0 auto; }
-  .dp-trigger .placeholder { color: #6b7075; }
-  .dp-panel {
-    position: absolute; z-index: 60; top: calc(100% + 8px); left: 0;
-    width: 300px; max-width: 92vw;
-    background: #0c0d10;
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 16px;
-    padding: 16px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-    opacity: 0; transform: translateY(-8px); pointer-events: none;
-    transition: opacity 0.2s var(--ease), transform 0.2s var(--ease);
-  }
-  .dp-panel.open { opacity: 1; transform: translateY(0); pointer-events: auto; }
-  .dp-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-  .dp-title { font-weight: 600; font-size: 15px; }
-  .dp-nav {
-    width: 32px; height: 32px; border-radius: 9px;
-    background: rgba(255,255,255,0.05); border: 1px solid var(--line);
-    color: var(--fg); font-size: 18px; cursor: pointer; line-height: 1;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.2s;
-  }
-  .dp-nav:hover:not(:disabled) { background: rgba(255,255,255,0.12); }
-  .dp-nav:disabled { opacity: 0.3; cursor: not-allowed; }
-  .dp-weekdays { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; margin-bottom: 6px; }
-  .dp-weekdays span { text-align: center; font-size: 11px; color: var(--muted); font-weight: 600; padding: 4px 0; }
-  .dp-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
-  .dp-day {
-    aspect-ratio: 1; border: none; background: transparent;
-    color: var(--fg); font-family: inherit; font-size: 14px;
-    border-radius: 9px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.15s;
-  }
-  .dp-day.empty { visibility: hidden; pointer-events: none; }
-  .dp-day:hover:not(:disabled):not(.empty) { background: rgba(255,255,255,0.1); }
-  .dp-day:disabled { color: #3a3d42; cursor: not-allowed; }
-  .dp-day.today {
-    position: relative;
-    border: 1px solid var(--g2);
-    color: var(--g2);
-    font-weight: 700;
-  }
-  /* Dot under today's number, so the marker survives colour-blindness and low contrast */
-  .dp-day.today::after {
-    content: '';
-    position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
-    width: 4px; height: 4px; border-radius: 50%;
-    background: var(--g2);
-  }
-  .dp-day.selected { background: var(--grad); color: #fff; font-weight: 600; }
-  /* When today is also the selected day, the gradient wins — flip the marker to white */
-  .dp-day.today.selected { color: #fff; border-color: transparent; }
-  .dp-day.today.selected::after { background: #fff; }
-
-  .dp-legend {
-    display: flex; align-items: center; gap: 6px;
-    margin-top: 12px; padding-top: 10px;
-    border-top: 1px solid var(--line);
-    font-size: 11px; color: var(--muted);
-  }
-  .dp-legend .dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--g2); flex: 0 0 auto;
-  }
-
   /* Floating chat button */
   .chat-fab {
     position: fixed; bottom: 24px; right: 24px; z-index: 85;
@@ -616,7 +391,6 @@
   .chat-fab svg { flex: 0 0 auto; }
   @media (max-width: 560px) { .chat-fab { padding: 15px; } .chat-fab span { display: none; } }
   .chat-fab[aria-expanded="true"] { opacity: 0; pointer-events: none; }
-
   /* Instant-answer panel (knowledge base inside the chat launcher) */
   .kb-panel {
     position: fixed; bottom: 24px; right: 24px; z-index: 90;
@@ -631,72 +405,19 @@
     transition: opacity 0.28s var(--ease), transform 0.28s var(--ease);
   }
   .kb-panel.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
-  .kb-head {
-    padding: 18px 20px 16px; background: var(--grad); color: #fff;
-    display: flex; align-items: flex-start; gap: 12px;
-  }
-  .kb-head h3 { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; }
-  .kb-head p { font-size: 13px; opacity: 0.9; margin-top: 3px; line-height: 1.45; }
-  .kb-close {
-    margin-left: auto; flex: 0 0 auto; width: 30px; height: 30px; border: none; cursor: pointer;
-    border-radius: 50%; background: rgba(255,255,255,0.18); color: #fff;
-    font-size: 20px; line-height: 1; display: grid; place-items: center;
-    transition: background 0.2s var(--ease);
-  }
-  .kb-close:hover { background: rgba(255,255,255,0.32); }
-  .kb-search { padding: 14px 16px 10px; border-bottom: 1px solid var(--line); }
-  .kb-search input {
-    width: 100%; padding: 11px 14px; border-radius: 11px;
-    border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.05);
-    color: var(--fg); font-family: inherit; font-size: 14.5px; outline: none;
-    transition: border-color 0.2s var(--ease), background 0.2s var(--ease);
-  }
-  .kb-search input::placeholder { color: var(--muted); }
-  .kb-search input:focus { border-color: rgba(45,212,191,0.55); background: rgba(255,255,255,0.08); }
-  .kb-list { overflow-y: auto; padding: 8px 10px 12px; flex: 1 1 auto; }
-  .kb-list details {
-    border: 1px solid transparent; border-radius: 12px; margin-bottom: 2px;
-    transition: background 0.2s var(--ease), border-color 0.2s var(--ease);
-  }
-  .kb-list details[open] { background: rgba(255,255,255,0.045); border-color: rgba(45,212,191,0.28); }
-  .kb-list summary {
-    list-style: none; cursor: pointer; padding: 12px 14px;
-    font-size: 14.5px; font-weight: 500; color: var(--fg); line-height: 1.4;
-    display: flex; align-items: flex-start; gap: 10px;
-  }
-  .kb-list summary::-webkit-details-marker { display: none; }
-  .kb-list summary::before {
-    content: "→"; color: var(--g1); flex: 0 0 auto; font-size: 13px; margin-top: 2px;
-    transition: transform 0.25s var(--ease);
-  }
-  .kb-list details[open] summary::before { transform: rotate(90deg); }
-  .kb-list summary:hover { color: #fff; }
-  .kb-list .kb-answer {
-    padding: 0 14px 14px 38px; font-size: 14px; line-height: 1.6; color: #c9ced4;
-  }
-  .kb-list .kb-answer a { color: var(--g1); border-bottom: 1px solid rgba(45,212,191,0.4); }
-  .kb-empty { padding: 22px 16px; text-align: center; color: var(--muted); font-size: 14px; line-height: 1.6; }
-  .kb-foot { padding: 12px 16px 16px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 8px; }
-  .kb-foot button, .kb-foot a {
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    padding: 12px 16px; border-radius: 11px; cursor: pointer;
-    font-family: inherit; font-size: 14.5px; font-weight: 600; text-align: center;
-    transition: transform 0.2s var(--ease), background 0.2s var(--ease);
-  }
-  .kb-foot button { border: none; background: var(--grad); color: #fff; }
-  .kb-foot a { border: 1px solid rgba(255,255,255,0.14); background: transparent; color: var(--fg); }
-  .kb-foot button:hover, .kb-foot a:hover { transform: translateY(-2px); }
-  .kb-foot a:hover { background: rgba(255,255,255,0.06); }
   @media (max-width: 560px) {
     .kb-panel { right: 16px; left: 16px; bottom: 16px; width: auto; max-height: calc(100vh - 32px); }
   }
-
   @media (prefers-reduced-motion: reduce) {
     * { scroll-behavior: auto !important; }
     .reveal { opacity: 1 !important; transform: none !important; }
     .scroll-hint { animation: none; }
   }
 </style>
+<!-- Below-the-fold CSS, off the critical path. media="print" makes it a
+     non-blocking fetch; the onload swap applies it as soon as it lands. -->
+<link rel="stylesheet" href="/styles.css" media="print" onload="this.media='all'" />
+<noscript><link rel="stylesheet" href="/styles.css" /></noscript>
 </head>
 <body>
 <div class="progress" id="progress"></div>
