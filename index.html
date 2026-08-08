@@ -27,6 +27,68 @@
 <meta name="twitter:description" content="Premium ceramic and carbon window film, installed at your home or office. We bring the shop to your driveway." />
 <meta name="twitter:image" content="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&amp;fit=crop&amp;w=1200&amp;h=630&amp;q=80" />
 
+<!-- Structured data. Every value here is taken from something stated on the
+     page — the three pricing cards, the six service cards, the footer contact.
+     Deliberately absent: postalAddress, openingHours and aggregateRating. This
+     is a mobile-only business with no storefront address anywhere on the site,
+     and the "5.0 avg rating" stat has no review count behind it, so claiming
+     one would be inventing review data. Add them here when they are real. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "@id": "https://www.tint2go.tech/#business",
+  "name": "Tint 2 Go",
+  "url": "https://www.tint2go.tech/",
+  "description": "Premium ceramic and carbon window film, installed at your home or office. We bring the shop to your driveway.",
+  "image": "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1200&h=630&q=80",
+  "telephone": "+1-860-995-0923",
+  "email": "sideshowtintz@gmail.com",
+  "priceRange": "$150-$250",
+  "currenciesAccepted": "USD",
+  "paymentAccepted": "Cash, Credit Card, Debit Card, Mobile Payment",
+  "availableLanguage": "en",
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Window tinting packages",
+    "itemListElement": [
+      {
+        "@type": "Offer",
+        "name": "Carbon",
+        "description": "Non-fading carbon film for a full car. Blocks 99% UV, lifetime warranty, mobile install included.",
+        "price": "150",
+        "priceCurrency": "USD",
+        "itemOffered": { "@type": "Service", "name": "Full car carbon window tint" }
+      },
+      {
+        "@type": "Offer",
+        "name": "Ceramic",
+        "description": "Premium ceramic film for a full car. Superior infrared heat block, no signal interference, lifetime warranty plus mobile install.",
+        "price": "250",
+        "priceCurrency": "USD",
+        "itemOffered": { "@type": "Service", "name": "Full car ceramic window tint" }
+      },
+      {
+        "@type": "Offer",
+        "name": "Single Windows",
+        "description": "Two fronts, a strip, or a redo. Matches existing tint; windshield and sunstrips; tint removal available.",
+        "price": "150",
+        "priceCurrency": "USD",
+        "itemOffered": { "@type": "Service", "name": "Single window tint" }
+      }
+    ]
+  },
+  "makesOffer": [
+    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Full Auto Tint", "description": "Complete vehicle tinting with premium ceramic or carbon film, computer-cut for a factory fit on every window." } },
+    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Mobile Service", "description": "A fully equipped mobile setup comes to your home, work, or wherever the vehicle is parked." } },
+    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Ceramic Heat Rejection", "description": "Blocks up to 99% of UV and a large share of infrared heat to keep the cabin cool and the interior from fading." } },
+    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Windshield & Sunstrip", "description": "Clear ceramic windshield film and custom sun strips for glare reduction without sacrificing visibility." } },
+    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Residential & Commercial", "description": "Home and storefront window film for privacy, energy savings, and UV protection, mobile install included." } },
+    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Tint Removal", "description": "Clean removal of old, bubbled, or purple film, leaving glass ready for a fresh premium install." } }
+  ]
+}
+</script>
+
 <!-- LCP: start the hero background fetch from the first bytes of the document.
      One tier matches per viewport, and each href is byte-identical to the
      background-image the stylesheet below asks for, so nothing downloads twice. -->
@@ -857,6 +919,30 @@
       d.appendChild(a);
       wrap.appendChild(d);
     });
+  })();
+
+  // Third consumer of the same knowledge base, after the FAQ section and the
+  // chat panel: search engines. Built from TINT_FAQ rather than pasted into
+  // <head> so an edited answer still updates everywhere from one place.
+  (function () {
+    if (!window.TINT_FAQ || !window.TINT_FAQ.length) return;
+    var strip = document.createElement('div');
+    var toText = function (html) { strip.innerHTML = html; return strip.textContent.trim(); };
+    var ld = document.createElement('script');
+    ld.type = 'application/ld+json';
+    ld.textContent = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      '@id': 'https://www.tint2go.tech/#faq',
+      mainEntity: window.TINT_FAQ.map(function (item) {
+        return {
+          '@type': 'Question',
+          name: item.q,
+          acceptedAnswer: { '@type': 'Answer', text: toText(item.a) }
+        };
+      })
+    });
+    document.head.appendChild(ld);
   })();
 </script>
 
