@@ -23,9 +23,29 @@
 <meta name="twitter:description" content="Premium ceramic and carbon window film, installed at your home or office. We bring the shop to your driveway." />
 <meta name="twitter:image" content="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&amp;fit=crop&amp;w=1200&amp;h=630&amp;q=80" />
 
+<!-- LCP: start the hero background fetch from the first bytes of the document.
+     One tier matches per viewport, and each href is byte-identical to the
+     background-image the stylesheet below asks for, so nothing downloads twice. -->
+<link rel="preconnect" href="https://images.unsplash.com" crossorigin />
+<link rel="preload" as="image" fetchpriority="high" media="(max-width: 768px)"
+      href="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&amp;fit=crop&amp;w=1000&amp;q=80" />
+<link rel="preload" as="image" fetchpriority="high" media="(min-width: 768.02px) and (max-width: 1439.98px)"
+      href="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&amp;fit=crop&amp;w=1600&amp;q=80" />
+<link rel="preload" as="image" fetchpriority="high" media="(min-width: 1440px)"
+      href="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&amp;fit=crop&amp;w=2000&amp;q=80" />
+
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<!-- Fetched at high priority but off the critical path: Inter is a cross-origin
+     round trip that used to block the first paint. Preloading rather than just
+     deferring keeps the swap early, so the fallback face is not on screen long
+     enough to cause a visible reflow. -->
+<link rel="preload" as="style"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      onload="this.rel='stylesheet'" />
+<noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+</noscript>
 <style>
   :root {
     --bg: #000000;
@@ -135,6 +155,23 @@
     background: radial-gradient(ellipse at center, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.85) 100%);
   }
 
+  /* Hero background is the LCP element, so it lives here rather than in an
+     inline style — that lets it be preloaded in <head> and sized per viewport.
+     A phone pulls ~135KB instead of the ~400KB full-width original. */
+  #hero .bg-img {
+    background-image: url('https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1000&q=80');
+  }
+  @media (min-width: 768.02px) {
+    #hero .bg-img {
+      background-image: url('https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1600&q=80');
+    }
+  }
+  @media (min-width: 1440px) {
+    #hero .bg-img {
+      background-image: url('https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=2000&q=80');
+    }
+  }
+
   .eyebrow {
     text-transform: uppercase;
     letter-spacing: 0.28em;
@@ -196,6 +233,24 @@
   .d2 { transition-delay: 0.22s; }
   .d3 { transition-delay: 0.34s; }
   .d4 { transition-delay: 0.46s; }
+
+  /* The hero is on screen at load, so its copy must not wait for the
+     scroll-reveal observer in the deferred script — that kept the h1 at
+     opacity 0 (ineligible as an LCP candidate) until the whole document had
+     parsed. Same entrance, driven by CSS so it starts at first paint.
+     The #hero prefix outranks `.reveal.in`, so the observer is a no-op here. */
+  #hero .reveal {
+    opacity: 1;
+    transform: none;
+    animation: heroIn 1s var(--ease) both;
+  }
+  #hero .reveal.d1 { animation-delay: 0.1s; }
+  #hero .reveal.d2 { animation-delay: 0.22s; }
+  #hero .reveal.d3 { animation-delay: 0.34s; }
+  @keyframes heroIn {
+    from { opacity: 0; transform: translateY(60px) scale(0.96); }
+    to   { opacity: 1; transform: none; }
+  }
 
   /* Services grid */
   .grid {
@@ -582,7 +637,7 @@
 
 <!-- HERO -->
 <section id="hero">
-  <div class="bg-img" style="background-image:url('https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=2000&q=80');"></div>
+  <div class="bg-img"></div>
   <p class="eyebrow reveal">Auto &amp; Mobile Window Tinting</p>
   <h1 class="reveal d1">Shade that comes<br /><span class="gradient-text">to you.</span></h1>
   <p class="lead reveal d2">Premium ceramic and carbon window film, installed at your home or office. Beat the heat, protect your interior, and ride in style — Tint 2 Go brings the shop to your driveway.</p>
@@ -595,7 +650,7 @@
 
 <!-- SERVICES -->
 <section id="services">
-  <div class="bg-img" style="background-image:url('https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?auto=format&fit=crop&w=2000&q=80');"></div>
+  <div class="bg-img" data-bg="https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?auto=format&fit=crop&q=80"></div>
   <p class="eyebrow reveal">What We Do</p>
   <h2 class="reveal d1">Tinting done <span class="gradient-text">right.</span></h2>
   <p class="lead reveal d2">From full vehicle wraps to a single windshield strip — precision-cut film and a bubble-free, lifetime-warranted finish.</p>
@@ -635,7 +690,7 @@
 
 <!-- WHY US -->
 <section id="why">
-  <div class="bg-img" style="background-image:url('https://images.unsplash.com/photo-1542282088-fe8426682b8f?auto=format&fit=crop&w=2000&q=80');"></div>
+  <div class="bg-img" data-bg="https://images.unsplash.com/photo-1542282088-fe8426682b8f?auto=format&fit=crop&q=80"></div>
   <p class="eyebrow reveal">Why Tint 2 Go</p>
   <h2 class="reveal d1">Built on <span class="gradient-text">trust &amp; craft.</span></h2>
   <p class="lead reveal d2">Every install is backed by a lifetime warranty and years of hands-on experience. No bubbles, no peeling, no purple.</p>
@@ -649,7 +704,7 @@
 
 <!-- PRICING -->
 <section id="pricing">
-  <div class="bg-img" style="background-image:url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=2000&q=80');"></div>
+  <div class="bg-img" data-bg="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80"></div>
   <p class="eyebrow reveal">Straightforward Pricing</p>
   <h2 class="reveal d1">Pick your <span class="gradient-text">shade.</span></h2>
   <p class="lead reveal d2">Transparent packages, mobile install included. Final quote depends on your vehicle — text us for an exact price.</p>
@@ -693,7 +748,7 @@
 
 <!-- FAQ -->
 <section id="faq">
-  <div class="bg-img" style="background-image:url('https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&w=2000&q=80');"></div>
+  <div class="bg-img" data-bg="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&q=80"></div>
   <p class="eyebrow reveal">Good To Know</p>
   <h2 class="reveal d1">Questions, <span class="gradient-text">answered.</span></h2>
   <p class="lead reveal d2">Everything you need to know before we bring the shade to your driveway.</p>
@@ -927,6 +982,28 @@
     entries.forEach((e) => e.target.classList.toggle('in', e.isIntersecting));
   }, { threshold: 0.25 });
   document.querySelectorAll('section').forEach((s) => sectionObs.observe(s));
+
+  // Below-the-fold section backgrounds load on approach, not at page load.
+  // Fetching all of them up front cost ~800KB that competed with the hero
+  // image for bandwidth and pushed LCP out. The hero is deliberately not in
+  // here — it is preloaded in <head> and set in CSS.
+  (function () {
+    const bgWidth = window.innerWidth <= 768 ? 1000 : (window.innerWidth < 1440 ? 1600 : 2000);
+    const load = (el) => {
+      el.style.backgroundImage = `url('${el.dataset.bg}&w=${bgWidth}')`;
+      el.removeAttribute('data-bg');
+    };
+    const targets = document.querySelectorAll('.bg-img[data-bg]');
+    if (!('IntersectionObserver' in window)) { targets.forEach(load); return; }
+    const bgObs = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        load(e.target);
+        bgObs.unobserve(e.target);
+      });
+    }, { rootMargin: '200% 0px' }); // start well before the section scrolls in
+    targets.forEach((el) => bgObs.observe(el));
+  })();
 
   // Custom calendar dropdown
   (function () {
