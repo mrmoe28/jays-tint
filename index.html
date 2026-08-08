@@ -103,14 +103,19 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <!-- Fetched at high priority but off the critical path: Inter is a cross-origin
-     round trip that used to block the first paint. Preloading rather than just
-     deferring keeps the swap early, so the fallback face is not on screen long
-     enough to cause a visible reflow. -->
+     round trip that used to block the first paint.
+
+     display=optional, not swap. With swap, a late Inter re-lays out the hero
+     copy, and that repaint registers as a NEW, later LCP candidate — across six
+     live runs it put LCP over 2.5s in half of them (median 2.88s) and it is the
+     same reflow behind the 0.04-0.07 CLS. optional gives the font a short
+     window and otherwise leaves the first paint alone; it still downloads and
+     is cached, so it applies from the next navigation on. -->
 <link rel="preload" as="style"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=optional"
       onload="this.rel='stylesheet'" />
 <noscript>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=optional" rel="stylesheet" />
 </noscript>
 <style>
   :root {
