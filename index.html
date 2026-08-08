@@ -1122,30 +1122,16 @@
 <script type="text/javascript">
 var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
 // Hide Tawk's default launcher — we use our own branded floating button
-Tawk_API.onLoad = function(){ Tawk_API.hideWidget(); if (window.__tawkWanted) { Tawk_API.maximize(); } };
+Tawk_API.onLoad = function(){ Tawk_API.hideWidget(); };
 Tawk_API.onChatMinimized = function(){ Tawk_API.hideWidget(); };
-
-// Tawk is ~340KB of third-party JS and was the single biggest mobile cost:
-// ~370ms of main-thread blocking during load, including the two longest tasks
-// on the page, which held back the hero's paint. Nothing above the fold needs
-// it, so it waits for the first sign of a real visitor — any pointer, key or
-// scroll — or for the chat button, whichever lands first.
-var loadTawk = (function () {
-  var started = false;
-  return function () {
-    if (started) { return; }
-    started = true;
-    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-    s1.async=true;
-    s1.src='https://embed.tawk.to/6a5e91b2642ea11d490f13a0/1ju0mi8td';
-    s1.charset='UTF-8';
-    s1.setAttribute('crossorigin','*');
-    s0.parentNode.insertBefore(s1,s0);
-  };
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/6a5e91b2642ea11d490f13a0/1ju0mi8td';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
 })();
-['pointerdown','keydown','touchstart','scroll'].forEach(function (evt) {
-  window.addEventListener(evt, loadTawk, { once: true, passive: true });
-});
 // The floating button opens our own instant-answer panel first; live chat is one
 // click deeper. The FAB is shown on its own timer so the knowledge base still
 // works if Tawk is blocked or slow to load.
@@ -1208,20 +1194,13 @@ var loadTawk = (function () {
 
   // Hand off to a real human.
   document.getElementById('kbLive').addEventListener('click', function () {
-    closePanel();
-    if (typeof Tawk_API.maximize === 'function') {
+    if (window.Tawk_API && typeof Tawk_API.maximize === 'function') {
+      closePanel();
       Tawk_API.maximize();
-      return;
+    } else {
+      // Tawk blocked or still loading — don't leave them stranded.
+      window.location.href = 'sms:+18609950923';
     }
-    // Still on its way in — kick the deferred load and open it on arrival.
-    window.__tawkWanted = true;
-    loadTawk();
-    setTimeout(function () {
-      // Tawk blocked or too slow — don't leave them stranded.
-      if (typeof Tawk_API.maximize !== 'function') {
-        window.location.href = 'sms:+18609950923';
-      }
-    }, 6000);
   });
 })();
 </script>
