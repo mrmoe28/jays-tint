@@ -28,7 +28,7 @@
     },
     {
       q: "How much does window tinting cost?",
-      a: "Pricing depends on your vehicle, how many windows you want done, and the film you choose. Check the <a href=\"#pricing\">pricing section</a> for our packages, or text Jay at <a href=\"tel:+14047374544\">(404) 737-4544</a> with your year, make, and model for a free quote.",
+      a: "Pricing depends on your vehicle, how many windows you want done, and the film you choose. Check the <a href=\"#pricing\">pricing section</a> for our packages, or text us at <a href=\"tel:+14047374544\">(404) 737-4544</a> with your year, make, and model for a free quote.",
       k: "price cost quote estimate how much money cheap expensive rate"
     },
     {
@@ -83,7 +83,7 @@
     },
     {
       q: "How do I book an appointment?",
-      a: "Fill out the <a href=\"#contact\">booking form</a> with your vehicle's year, make, model, and the tint you're after — we'll text you back to confirm. Prefer to talk? Call or text Jay at <a href=\"tel:+14047374544\">(404) 737-4544</a>.",
+      a: "Fill out the <a href=\"#contact\">booking form</a> with your vehicle's year, make, model, and the tint you're after — we'll text you back to confirm. Prefer to talk? Call or text us at <a href=\"tel:+14047374544\">(404) 737-4544</a>.",
       k: "book booking schedule appointment reserve contact call text availability"
     }
   ];
@@ -331,7 +331,7 @@ var loadTawk = (function () {
 
   var empty = document.createElement('p');
   empty.className = 'kb-empty';
-  empty.innerHTML = 'No match for that one. Hit <strong>Chat with a person</strong> below and Jay will answer it himself.';
+  empty.innerHTML = 'No match for that one. Hit <strong>Chat with a person</strong> below and we will answer it personally.';
   empty.style.display = 'none';
   list.appendChild(empty);
 
