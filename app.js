@@ -28,7 +28,7 @@
     },
     {
       q: "How much does window tinting cost?",
-      a: "Pricing depends on your vehicle, how many windows you want done, and the film you choose. Check the <a href=\"#pricing\">pricing section</a> for our packages, or text Jay at <a href=\"tel:+18609950923\">(860) 995-0923</a> with your year, make, and model for a free quote.",
+      a: "Pricing depends on your vehicle, how many windows you want done, and the film you choose. Check the <a href=\"#pricing\">pricing section</a> for our packages, or text Jay at <a href=\"tel:+14047374544\">(404) 737-4544</a> with your year, make, and model for a free quote.",
       k: "price cost quote estimate how much money cheap expensive rate"
     },
     {
@@ -83,7 +83,7 @@
     },
     {
       q: "How do I book an appointment?",
-      a: "Fill out the <a href=\"#contact\">booking form</a> with your vehicle's year, make, model, and the tint you're after — we'll text you back to confirm. Prefer to talk? Call or text Jay at <a href=\"tel:+18609950923\">(860) 995-0923</a>.",
+      a: "Fill out the <a href=\"#contact\">booking form</a> with your vehicle's year, make, model, and the tint you're after — we'll text you back to confirm. Prefer to talk? Call or text Jay at <a href=\"tel:+14047374544\">(404) 737-4544</a>.",
       k: "book booking schedule appointment reserve contact call text availability"
     }
   ];
@@ -377,7 +377,7 @@ var loadTawk = (function () {
     setTimeout(function () {
       // Tawk blocked or too slow — don't leave them stranded.
       if (typeof Tawk_API.maximize !== 'function') {
-        window.location.href = 'sms:+18609950923';
+        window.location.href = 'sms:+14047374544';
       }
     }, 6000);
   });
